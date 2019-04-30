@@ -1,12 +1,12 @@
-FROM ros:bouncy-ros-core-bionic
+FROM ros:crystal-ros-core-bionic
 # install ros2 packages
 RUN apt-get update && apt-get install -y \
-    ros-bouncy-ros-base=0.5.1-0* git wget python3-colcon-ros vim \
+    ros-crystal-ros-base=0.5.1-0* git wget python3-colcon-ros vim \
     && rm -rf /var/lib/apt/lists/*
 
-RUN . /opt/ros/bouncy/setup.sh && export CMAKE_PREFIX_PATH=$AMENT_PREFIX_PATH:$CMAKE_PREFIX_PATH && \
+RUN . /opt/ros/crystal/setup.sh && export CMAKE_PREFIX_PATH=$AMENT_PREFIX_PATH:$CMAKE_PREFIX_PATH && \
 cd && mkdir ros2_ws/src -p && cd ros2_ws/src && \
-git clone https://github.com/Roboy/roboy_communication.git -b bouncy && \
+git clone https://github.com/Roboy/roboy_communication.git -b crystal && \
 git clone https://github.com/Roboy/pyroboy.git && \
 cd .. && colcon build --symlink-install
 
