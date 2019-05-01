@@ -59,10 +59,10 @@ RUN cd ~ && mkdir -p ~/melodic_ws/src && \
 
 # ros1_bridge
 RUN mkdir -p ~/ros1_bridge_ws/src && cd ~/ros1_bridge_ws/src && \
-    git clone https://github.com/Roboy/ros1_bridge.git -b bouncy
+    git clone https://github.com/Roboy/ros1_bridge.git -b crystal
 
 RUN . ~/melodic_ws/devel/setup.sh && \
-    . /opt/ros/bouncy/setup.sh && . ~/ros2_ws/install/setup.sh && \
+    . /opt/ros/crystal/setup.sh && . ~/ros2_ws/install/setup.sh && \
     export CMAKE_PREFIX_PATH=$AMENT_PREFIX_PATH:$CMAKE_PREFIX_PATH && \
     cd ~/ros1_bridge_ws && colcon build --symlink-install
 
