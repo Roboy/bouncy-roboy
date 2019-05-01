@@ -79,7 +79,7 @@ RUN cd ~ && mkdir -p ~/melodic_ws/src && \
 
 # ros1_bridge
 RUN mkdir -p ~/ros1_bridge_ws/src && cd ~/ros1_bridge_ws/src && \
-    git clone https://github.com/Roboy/ros1_bridge.git -b crystal
+    git clone https://github.com/ros2/ros1_bridge.git -b crystal
 
 RUN . ~/melodic_ws/devel/setup.sh && \
     . /opt/ros/crystal/setup.sh && . ~/ros2_ws/install/setup.sh && \
