@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN . /opt/ros/crystal/setup.sh && export CMAKE_PREFIX_PATH=$AMENT_PREFIX_PATH:$CMAKE_PREFIX_PATH && \
 cd && mkdir ros2_ws/src -p && cd ros2_ws/src && \
-git clone https://github.com/Roboy/roboy_communication.git -b crystal && \
+git clone https://github.com/Roboy/roboy_communication.git -b ros1bridge && \
 git clone https://github.com/Roboy/pyroboy.git && \
 cd .. && colcon build --symlink-install
 
@@ -34,7 +34,39 @@ RUN apt-get update && apt-get install -y --fix-missing \
     software-properties-common \
     zip \
     && apt-get clean && rm -rf /tmp/* /var/tmp/*
+    
+# install ros packages
+ENV ROS_DISTRO melodic
+RUN apt-get update && apt-get install -y \
+    ros-melodic-ros-base=1.4.1-0* \
+    && rm -rf /var/lib/apt/lists/*
 
+# install ros packages
+ENV ROS_DISTRO melodic
+RUN apt-get update && apt-get install -y \
+    ros-melodic-ros-base=1.4.1-0* \
+    && rm -rf /var/lib/apt/lists/*
+
+
+# fix weird cmake issue
+RUN apt-get update && apt-get install -y python-pip && \
+    pip install cmake
+
+# roboy_communication for melodic
+RUN cd ~ && mkdir -p ~/melodic_ws/src && \
+    cd ~/melodic_ws/src && git clone https://github.com/Roboy/roboy_communication.git -b melodic && \
+    cd ~/melodic_ws && . /opt/ros/melodic/setup.sh && catkin_make
+
+# ros1_bridge
+RUN mkdir -p ~/ros1_bridge_ws/src && cd ~/ros1_bridge_ws/src && \
+    git clone https://github.com/Roboy/ros1_bridge.git -b bouncy
+
+RUN . ~/melodic_ws/devel/setup.sh && \
+    . /opt/ros/bouncy/setup.sh && . ~/ros2_ws/install/setup.sh && \
+    export CMAKE_PREFIX_PATH=$AMENT_PREFIX_PATH:$CMAKE_PREFIX_PATH && \
+    cd ~/ros1_bridge_ws && colcon build --symlink-install
+
+# dlib
 RUN cd ~ && \
     mkdir -p dlib && \
     git clone https://github.com/davisking/dlib.git dlib/ && \
