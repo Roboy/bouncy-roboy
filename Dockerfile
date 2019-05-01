@@ -1,7 +1,7 @@
 FROM ros:crystal-ros-core-bionic
 # install ros2 packages
 RUN apt-get update && apt-get install -y \
-    ros-crystal-ros-base=0.5.1-0* git wget python3-colcon-ros vim \
+    ros-crystal-ros-base=0.6.1-0* git wget python3-colcon-ros vim \
     && rm -rf /var/lib/apt/lists/*
 
 RUN . /opt/ros/crystal/setup.sh && export CMAKE_PREFIX_PATH=$AMENT_PREFIX_PATH:$CMAKE_PREFIX_PATH && \
