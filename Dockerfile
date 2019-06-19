@@ -1,16 +1,16 @@
-FROM ros:crystal-ros-core-bionic
+FROM ros:dashing-ros-base-bionic
 # install ros2 packages
 RUN apt-get update && apt-get install -y \
-    ros-crystal-ros-base=0.6.1-0* git wget python3-colcon-ros vim \
+    git wget python3-colcon-ros vim \
     && rm -rf /var/lib/apt/lists/*
 
-RUN . /opt/ros/crystal/setup.sh && export CMAKE_PREFIX_PATH=$AMENT_PREFIX_PATH:$CMAKE_PREFIX_PATH && \
+RUN . /opt/ros/dashing/setup.sh && export CMAKE_PREFIX_PATH=$AMENT_PREFIX_PATH:$CMAKE_PREFIX_PATH && \
 cd && mkdir ros2_ws/src -p && cd ros2_ws/src && \
 git clone https://github.com/Roboy/roboy_communication.git -b ros1bridge && \
 git clone https://github.com/Roboy/pyroboy.git && \
 cd .. && colcon build --symlink-install
 
-RUN apt-get update && apt-get install -y software-properties-common && add-apt-repository universe && add-apt-repository main 
+RUN apt-get update && apt-get install -y software-properties-common && add-apt-repository universe && add-apt-repository main
 
 RUN apt-get update && apt-get install -y --fix-missing \
     build-essential \
@@ -33,9 +33,10 @@ RUN apt-get update && apt-get install -y --fix-missing \
     python3-numpy \
     software-properties-common \
     zip \
+    alsa-utils \
     && apt-get clean && rm -rf /tmp/* /var/tmp/*
-    
-    
+
+
 # ros melodic
 RUN apt-get update && apt-get install -q -y \
     dirmngr \
@@ -54,35 +55,28 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     python-rosinstall \
     python-vcstools \
     && rm -rf /var/lib/apt/lists/*
-    
-# install ros packages
-ENV ROS_DISTRO melodic
-RUN apt-get update && apt-get install -y \
-    ros-melodic-ros-base=1.4.1-0* \
-    && rm -rf /var/lib/apt/lists/*
 
 # install ros packages
 ENV ROS_DISTRO melodic
 RUN apt-get update && apt-get install -y \
     ros-melodic-ros-base=1.4.1-0* \
     && rm -rf /var/lib/apt/lists/*
-
 
 # fix weird cmake issue
-RUN apt-get update && apt-get install -y python-pip && \
+RUN apt-get update && apt-get install -y python-pip ros-dashing-launch-testing ros-dashing-launch-testing-ros ros-dashing-launch-testing-ament-cmake ros-dashing-ros2run && \
     pip install cmake
 
 # roboy_communication for melodic
 RUN cd ~ && mkdir -p ~/melodic_ws/src && \
-    cd ~/melodic_ws/src && git clone https://github.com/Roboy/roboy_communication.git -b melodic && \
+    cd ~/melodic_ws/src && git clone https://github.com/Roboy/roboy_communication.git && \
     cd ~/melodic_ws && . /opt/ros/melodic/setup.sh && catkin_make
 
 # ros1_bridge
 RUN mkdir -p ~/ros1_bridge_ws/src && cd ~/ros1_bridge_ws/src && \
-    git clone https://github.com/ros2/ros1_bridge.git -b crystal
+    git clone https://github.com/ros2/ros1_bridge.git -b dashing
 
 RUN . ~/melodic_ws/devel/setup.sh && \
-    . /opt/ros/crystal/setup.sh && . ~/ros2_ws/install/setup.sh && \
+    . /opt/ros/dashing/setup.sh && . ~/ros2_ws/install/setup.sh && \
     export CMAKE_PREFIX_PATH=$AMENT_PREFIX_PATH:$CMAKE_PREFIX_PATH && \
     cd ~/ros1_bridge_ws && colcon build --symlink-install
 
@@ -91,14 +85,13 @@ RUN cd ~ && \
     mkdir -p dlib && \
     git clone https://github.com/davisking/dlib.git dlib/ && \
     cd  dlib/ && \
-    python3 setup.py install 
+    python3 setup.py install
 
 RUN pip3 install face_recognition
 
 RUN pip3 install scientio websockets asyncio redis
-RUN pip3 install numpy==1.16 
+RUN pip3 install numpy==1.16
 
 RUN cd ~ && mkdir workspace && cd workspace && git clone https://github.com/Roboy/face_oracle.git
-COPY ./entrypoint.sh /
-ENTRYPOINT ["/entrypoint.sh"]
-
+# COPY ./entrypoint.sh /
+# ENTRYPOINT ["/entrypoint.sh"]
